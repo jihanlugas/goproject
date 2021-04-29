@@ -33,6 +33,7 @@ func GetProjects(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetProject(w http.ResponseWriter, r *http.Request) {
+	log.Println("Hit http://localhost:8010/project")
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 
@@ -41,22 +42,26 @@ func GetProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+
 	p := model.Project{ID: id}
 
-	if err := p.GetProject(); err != nil {
-		switch err {
-		case sql.ErrNoRows:
-			RespondWithError(w, http.StatusNotFound, "Project not found")
-		default:
-			RespondWithError(w, http.StatusInternalServerError, err.Error())
+	if p.ID != 0 {
+		if err := p.GetProject(); err != nil {
+			switch err {
+			case sql.ErrNoRows:
+				RespondWithError(w, http.StatusNotFound, "Project not found")
+			default:
+				RespondWithError(w, http.StatusInternalServerError, err.Error())
+			}
+			return
 		}
-		return
 	}
 
-	RespondWithJSON(w, http.StatusOK, p)
+	RespondWithSuccess(w, http.StatusOK, p)
 }
 
 func CreateProject(w http.ResponseWriter, r *http.Request) {
+	log.Println("Hit http://localhost:8010/project")
 	var p model.Project
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&p); err != nil {
@@ -70,7 +75,7 @@ func CreateProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	RespondWithJSON(w, http.StatusCreated, p)
+	RespondWithSuccess(w, http.StatusCreated, p)
 }
 
 func UpdateProject(w http.ResponseWriter, r *http.Request) {

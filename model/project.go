@@ -9,8 +9,8 @@ type Project struct {
 	Name     	string `json:"name"`
 	Location	string `json:"location"`
 	Description	string `json:"description"`
-	StartAt		string `json:"start_at"`
-	EndAt		string `json:"end_at"`
+	StartAt		string `json:"startAt"`
+	EndAt		string `json:"endAt"`
 }
 
 func GetProjects(start, count int) ([]Project, error) {
