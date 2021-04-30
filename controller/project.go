@@ -102,7 +102,7 @@ func UpdateProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	RespondWithJSON(w, http.StatusOK, p)
+	RespondWithSuccess(w, http.StatusOK, p)
 }
 
 func DeleteProject(w http.ResponseWriter, r *http.Request) {
