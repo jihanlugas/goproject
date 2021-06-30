@@ -16,6 +16,7 @@ type Response struct {
 func RespondWithError(w http.ResponseWriter, code int, message string) {
 	response := &Response{
 		Error: true,
+		Message: message,
 	}
 	RespondWithJSON(w, code, response)
 }

@@ -2,6 +2,7 @@ package model
 
 import (
 	"github.com/jihanlugas/goproject.git/config"
+	"time"
 )
 
 type Project struct {
@@ -9,8 +10,9 @@ type Project struct {
 	Name     	string `json:"name"`
 	Location	string `json:"location"`
 	Description	string `json:"description"`
-	StartAt		string `json:"startAt"`
-	EndAt		string `json:"endAt"`
+	StartAt		time.Time `json:"startAt"`
+	EndAt		time.Time `json:"endAt"`
+	ProjectTask []ProjectTask `json:"projectTask"`
 }
 
 func GetProjects(start, count int) ([]Project, error) {
@@ -29,6 +31,15 @@ func GetProjects(start, count int) ([]Project, error) {
 		if err := rows.Scan(&p.ID, &p.Name, &p.Location, &p.Description, &p.StartAt, &p.EndAt); err != nil {
 			return nil, err
 		}
+
+		projecttasks, err := GetProjectTasks(p.ID)
+
+		if err != nil {
+			return nil, err
+		}
+
+		p.ProjectTask = projecttasks
+
 		projects = append(projects, p)
 	}
 
@@ -39,8 +50,22 @@ func (p *Project) GetProject() error {
 	db := config.DbConn()
 	defer db.Close()
 
-	return db.QueryRow("SELECT name, location, description, start_at, end_at FROM projects where id = ?",
+	err := db.QueryRow("SELECT name, location, description, start_at, end_at FROM projects where id = ?",
 		p.ID).Scan(&p.Name, &p.Location, &p.Description, &p.StartAt, &p.EndAt)
+
+	if err != nil {
+		return err
+	}
+
+	projecttasks, err := GetProjectTasks(p.ID)
+
+	if err != nil {
+		return err
+	}
+
+	p.ProjectTask = projecttasks
+
+	return nil
 }
 
 func (p *Project) CreateProject() error {
@@ -69,6 +94,10 @@ func (p *Project) UpdateProject() error {
 func (p *Project) DeleteProject() error {
 	db := config.DbConn()
 	defer db.Close()
+
+	if err := DeleteProjectTask(p.ID); err != nil {
+		return err
+	}
 
 	_, err := db.Exec("DELETE FROM projects WHERE id = ? ", p.ID)
 

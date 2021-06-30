@@ -7,7 +7,7 @@ func DbConn() (db *sql.DB) {
 	dbUser := "jihanlugas"
 	dbPass := "12345678"
 	dbName := "goproject"
-	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName)
+	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName+"?parseTime=true")
 	if err != nil {
 		panic(err.Error())
 	}

@@ -65,7 +65,7 @@ func CreateProject(w http.ResponseWriter, r *http.Request) {
 	var p model.Project
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&p); err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	defer r.Body.Close()
@@ -120,8 +120,7 @@ func DeleteProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	RespondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
-
+	RespondWithSuccess(w, http.StatusOK, map[string]string{"message": "Data Deleted"})
 }
 
 
